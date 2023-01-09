@@ -4,7 +4,7 @@ import emitter from '@/events/EventEmitter';
 import { IPostRecord } from '@/types/records';
 import ApplicationError from '@/exceptions/ApplicationError';
 
-const globalPosts: Record<string, IPostRecord> = {};
+let globalPosts: Record<string, IPostRecord> = {};
 
 export default class PostRepository {
 	static get(id: string) {
@@ -22,7 +22,7 @@ export default class PostRepository {
 		return createdPost;
 	}
 
-	static update(id: string, post: Omit<IPostRecord, 'id'>) {
+	static update(id: string, post: Partial<Omit<IPostRecord, 'id'>>) {
 		const found = PostRepository.get(id);
 
 		if (!found) {
@@ -46,5 +46,9 @@ export default class PostRepository {
 
 	static all() {
 		return Object.values(globalPosts);
+	}
+
+	static fresh() {
+		globalPosts = {};
 	}
 }

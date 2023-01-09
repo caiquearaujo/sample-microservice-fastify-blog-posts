@@ -17,6 +17,7 @@ module.exports = {
 		'./test/',
 		'./debug',
 		'./build',
+		'./src/server',
 	],
 	coverageReporters: ['json-summary', 'text', 'lcov'],
 	transform: {
