@@ -1,10 +1,11 @@
 import { FastifyInstance } from 'fastify';
 import ApiServer from '@/server/ApiServer';
 import FastifyApplierGroup from '@/server/FastifyApplierGroup';
-import PostRepository from '@/repositories/PostRepository';
+import PostRepository, {
+	IPostRecord,
+} from '@/repositories/PostRepository';
 import routes from '@/routes';
 import plugins from '@/server/plugins';
-import { IPostRecord } from '@/types/records';
 
 let app: FastifyInstance;
 
@@ -46,6 +47,7 @@ describe('Posts Routes', () => {
 			payload: {
 				title: 'My first post',
 				content: 'This is my first post',
+				status: 'draft',
 			},
 		});
 
@@ -54,6 +56,7 @@ describe('Posts Routes', () => {
 		expect(response.statusCode).toBe(201);
 		expect(body.title).toBe('My first post');
 		expect(body.content).toBe('This is my first post');
+		expect(body.status).toBe('draft');
 
 		createdPost = body;
 	});
@@ -87,6 +90,7 @@ describe('Posts Routes', () => {
 		expect(body.id).toBe(createdPost.id);
 		expect(body.title).toBe('My updated title');
 		expect(body.content).toBe('This is my first post');
+		expect(body.status).toBe('draft');
 	});
 
 	it('GET /posts/:id -> cannot get a post', async () => {
@@ -118,5 +122,6 @@ describe('Posts Routes', () => {
 		expect(body[0].id).toBe(createdPost.id);
 		expect(body[0].title).toBe('My updated title');
 		expect(body[0].content).toBe('This is my first post');
+		expect(body[0].status).toBe('draft');
 	});
 });

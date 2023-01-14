@@ -3,21 +3,25 @@ import { TFnApplyToFastify } from '@/types/types';
 import PostRepository from '@/repositories/PostRepository';
 
 const createPost: TFnApplyToFastify = async (app: FastifyInstance) => {
-	app.post('/posts', (request, reply) => {
-		const { title, content } = request.body as any;
+	app.post('/posts', async (request, reply) => {
+		const { title, content, status } = request.body as any;
 
 		return reply
 			.status(201)
-			.send(PostRepository.create({ title, content }));
+			.send(await PostRepository.create({ title, content, status }));
 	});
 };
 
 const updatePost: TFnApplyToFastify = async (app: FastifyInstance) => {
-	app.put('/posts/:id', (request, reply) => {
-		const { id } = request.params as any;
-		const { title, content } = request.body as any;
+	app.put('/posts/:id', async (request, reply) => {
+		const { id } = request.params as Record<string, string>;
+		const { title, content, status } = request.body as any;
 
-		const post = PostRepository.update(id, { title, content });
+		const post = await PostRepository.update(id, {
+			title,
+			content,
+			status,
+		});
 
 		return reply.status(200).send(post);
 	});

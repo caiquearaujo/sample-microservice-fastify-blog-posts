@@ -1,9 +1,10 @@
 import routes from '@/routes';
-import PostRepository from '@/repositories/PostRepository';
+import PostRepository, {
+	IPostRecord,
+} from '@/repositories/PostRepository';
 import ApiServer from '@/server/ApiServer';
 import FastifyApplierGroup from '@/server/FastifyApplierGroup';
 import plugins from '@/server/plugins';
-import { IPostRecord } from '@/types/records';
 
 beforeAll(async () => {
 	const api = new ApiServer({
@@ -22,10 +23,11 @@ describe('Post Repository', () => {
 		expect(PostRepository.all().length).toBe(0);
 	});
 
-	it('can add and get a post', () => {
-		const created = PostRepository.create({
+	it('can add and get a post', async () => {
+		const created = await PostRepository.create({
 			title: 'My first post',
 			content: 'This is my first post',
+			status: 'draft',
 		});
 
 		const found = PostRepository.get(created.id);
@@ -45,8 +47,8 @@ describe('Post Repository', () => {
 		expect(PostRepository.get('unknown')).toBeUndefined();
 	});
 
-	it('can update a post', () => {
-		let updatedPost = PostRepository.update(createdPost.id, {
+	it('can update a post', async () => {
+		let updatedPost = await PostRepository.update(createdPost.id, {
 			title: 'My new title',
 		});
 
@@ -54,9 +56,10 @@ describe('Post Repository', () => {
 			id: createdPost.id,
 			title: 'My new title',
 			content: createdPost.content,
+			status: 'draft',
 		});
 
-		updatedPost = PostRepository.update(createdPost.id, {
+		updatedPost = await PostRepository.update(createdPost.id, {
 			content: 'My new content',
 		});
 
@@ -64,9 +67,10 @@ describe('Post Repository', () => {
 			id: createdPost.id,
 			title: 'My new title',
 			content: 'My new content',
+			status: 'draft',
 		});
 
-		updatedPost = PostRepository.update(createdPost.id, {
+		updatedPost = await PostRepository.update(createdPost.id, {
 			title: 'My updated title',
 			content: 'This is my updated content, okay?',
 		});
@@ -75,10 +79,26 @@ describe('Post Repository', () => {
 			id: createdPost.id,
 			title: 'My updated title',
 			content: 'This is my updated content, okay?',
+			status: 'draft',
+		});
+
+		updatedPost = await PostRepository.update(createdPost.id, {
+			title: 'My updated title',
+			content: 'This is my updated content, okay?',
+			status: 'published',
+		});
+
+		expect(updatedPost).toStrictEqual({
+			id: createdPost.id,
+			title: 'My updated title',
+			content: 'This is my updated content, okay?',
+			status: 'published',
 		});
 	});
 
 	it('cannot update an invalid post id', () => {
-		expect(() => PostRepository.update('unknown', {})).toThrowError();
+		expect(
+			async () => await PostRepository.update('unknown', {})
+		).rejects.toThrowError();
 	});
 });

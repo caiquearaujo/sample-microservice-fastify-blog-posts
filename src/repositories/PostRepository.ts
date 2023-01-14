@@ -1,8 +1,16 @@
 import { randomBytes } from 'crypto';
 
 import emitter from '@/events/EventEmitter';
-import { IPostRecord } from '@/types/records';
 import ApplicationError from '@/exceptions/ApplicationError';
+
+export type TPostStatus = 'draft' | 'published' | 'archived';
+
+export interface IPostRecord {
+	id: string;
+	title: string;
+	content: string;
+	status: TPostStatus;
+}
 
 let globalPosts: Record<string, IPostRecord> = {};
 
@@ -11,18 +19,21 @@ export default class PostRepository {
 		return globalPosts[id] ?? undefined;
 	}
 
-	static create(post: Omit<IPostRecord, 'id'>) {
+	static async create(post: Omit<IPostRecord, 'id'>) {
 		const createdPost = {
 			id: randomBytes(6).toString('hex'),
 			...post,
 		};
 
 		globalPosts[createdPost.id] = createdPost;
-		emitter('PostCreated', createdPost);
+		await emitter('PostCreated', createdPost);
 		return createdPost;
 	}
 
-	static update(id: string, post: Partial<Omit<IPostRecord, 'id'>>) {
+	static async update(
+		id: string,
+		post: Partial<Omit<IPostRecord, 'id'>>
+	) {
 		const found = PostRepository.get(id);
 
 		if (!found) {
@@ -37,10 +48,11 @@ export default class PostRepository {
 			...found,
 			title: post.title ?? found.title,
 			content: post.content ?? found.content,
+			status: post.status ?? found.status,
 		};
 
 		globalPosts[id] = updatedPost;
-		emitter('PostCreated', updatedPost);
+		await emitter('PostUpdated', updatedPost);
 		return updatedPost;
 	}
 
