@@ -1,6 +1,8 @@
 import fastify, { FastifyInstance } from 'fastify';
 import path from 'path';
 
+import EventBus from '@/events/EventBus';
+import PostUpdated from '@/events/handlers/PostUpdated';
 import { IApiServer, IHttpServer } from '@/types/classes';
 import { IApplyToFastify } from '@/types/interfaces';
 import { TAvailableEnvs, TEnvVariables } from '@/types/types';
@@ -53,6 +55,15 @@ export default class ApiServer implements IApiServer {
 	}
 
 	protected async init(): Promise<void> {
+		// Prepare application logger
+		Logger.prepareInstance(this.app.log);
+
+		// Subscribe to events
+		await EventBus.subscribe(['PostUpdated']);
+
+		// Prepare EventBus with handlers
+		EventBus.prepareInstance([PostUpdated]);
+
 		// Plugins
 		await this.plugins.apply(this.app, this.env);
 
@@ -81,7 +92,5 @@ export default class ApiServer implements IApiServer {
 				message,
 			});
 		});
-
-		Logger.prepareInstance(this.app.log);
 	}
 }

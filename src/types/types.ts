@@ -18,4 +18,6 @@ export type TFnApplyToFastify = (
 export type TFnEventEmitter<T = object> = (
 	type: string,
 	payload: T
-) => Promise<void>;
+) => Promise<boolean>;
+
+export type TEventSubscribe = () => Promise<void>;

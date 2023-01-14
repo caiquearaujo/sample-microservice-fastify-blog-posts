@@ -1,7 +1,7 @@
 import { randomBytes } from 'crypto';
 
-import emitter from '@/events/EventEmitter';
 import ApplicationError from '@/exceptions/ApplicationError';
+import EventBus from '@/events/EventBus';
 
 export type TPostStatus = 'draft' | 'published' | 'archived';
 
@@ -26,7 +26,7 @@ export default class PostRepository {
 		};
 
 		globalPosts[createdPost.id] = createdPost;
-		await emitter('PostCreated', createdPost);
+		await EventBus.emit('post.created', createdPost);
 		return createdPost;
 	}
 
@@ -52,7 +52,7 @@ export default class PostRepository {
 		};
 
 		globalPosts[id] = updatedPost;
-		await emitter('PostUpdated', updatedPost);
+		await EventBus.emit('post.updated', updatedPost);
 		return updatedPost;
 	}
 

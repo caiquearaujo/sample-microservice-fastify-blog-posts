@@ -18,3 +18,8 @@ export interface IHttpServer {
 	stop(): Promise<boolean>;
 	isRunning(): boolean;
 }
+
+export interface IEventHandler<T> {
+	event(): string;
+	handle(event: string, payload: T): Promise<boolean>;
+}
