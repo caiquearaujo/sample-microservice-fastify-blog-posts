@@ -59,7 +59,7 @@ export default class ApiServer implements IApiServer {
 		Logger.prepareInstance(this.app.log);
 
 		// Subscribe to events
-		await EventBus.subscribe(['PostUpdated']);
+		await EventBus.subscribe(['post.updated']);
 
 		// Prepare EventBus with handlers
 		EventBus.prepareInstance([PostUpdated]);
