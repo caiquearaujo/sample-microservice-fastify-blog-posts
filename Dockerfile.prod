@@ -10,6 +10,8 @@ COPY ./package*.json ./
 RUN npm ci
 # Copy all local files to working directory
 COPY . .
+# Build the app
+RUN npm run build
 # Run as default command npm run launch
 CMD ["npm", "run", "launch"]
 # Expose port 3000

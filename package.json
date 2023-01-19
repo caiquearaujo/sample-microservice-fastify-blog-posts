@@ -7,7 +7,7 @@
 		"check": "tsc --noEmit",
 		"build": "cross-env NODE_ENV=production ENVIRONMENT=production tsc -p tsconfig.build.json",
 		"start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' ./src/index.ts",
-		"launch": "npm run build && cross-env NODE_ENV=production ENVIRONMENT=production node ./build/index.js",
+		"launch": "cross-env NODE_ENV=production ENVIRONMENT=production node ./build/index.js",
 		"format": "prettier --write \"src/**/*.ts\"",
 		"lint": "eslint --ext .ts --ignore-path .gitignore --fix src",
 		"test": "cross-env NODE_ENV=test ENVIRONMENT=test jest",
